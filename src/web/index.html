@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>novel-forge · 连载写作台</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><b>novel-forge</b><span id="brand-sub">逐章推进</span></div>
+    <button class="btn ghost sm" id="rail-toggle" style="display:none">书目</button>
+    <span class="pill model" id="pill-model"><span class="dot"></span><span>模型</span></span>
+    <span class="pill" id="pill-zuojia"><span class="dot"></span><span>作家助手</span></span>
+    <div class="spacer"></div>
+    <div class="row" id="top-actions"><button class="btn ghost sm" id="btn-book-settings">书信息</button></div>
+  </header>
+
+  <aside class="rail" id="rail">
+    <div class="rail-head"><span>书目</span><button class="btn ghost sm" id="btn-new-book">新建</button></div>
+    <div class="book-list" id="book-list"><div class="skeleton"><i style="width:70%"></i><i style="width:50%"></i></div></div>
+  </aside>
+
+  <main class="main">
+    <nav class="tabs" role="tablist">
+      <button class="tab" role="tab" data-view="chapters" aria-selected="true">目录</button>
+      <button class="tab" role="tab" data-view="outline" aria-selected="false">大纲</button>
+      <button class="tab" role="tab" data-view="cast" aria-selected="false">人物</button>
+      <button class="tab" role="tab" data-view="threads" aria-selected="false">伏笔台账</button>
+      <button class="tab" role="tab" data-view="bible" aria-selected="false">设定与事实</button>
+      <button class="tab" role="tab" data-view="structure" aria-selected="false">结构</button>
+      <button class="tab" role="tab" data-view="pacing" aria-selected="false">爆点节奏</button>
+      <button class="tab" role="tab" data-view="check" aria-selected="false">体检</button>
+      <button class="tab" role="tab" data-view="push" aria-selected="false">递交</button>
+      <div class="spacer"></div>
+      <span class="meta muted" id="tab-meta"></span>
+    </nav>
+
+    <section class="view active" id="view-chapters">
+      <div class="daily" id="daily-strip"></div>
+      <div class="split">
+        <div class="pane">
+          <div class="pane-head">
+            <h2>章节</h2>
+            <span class="meta" id="chapters-meta">—</span>
+            <div class="spacer"></div>
+            <button class="btn sm" id="btn-add-volume">新建卷</button>
+            <button class="btn sm" id="btn-plan">规划下一章</button>
+            <button class="btn sm" id="btn-export">导出</button>
+          </div>
+          <div class="scroll" id="chapters-body"></div>
+        </div>
+        <div class="pane writer">
+          <div class="pane-head">
+            <h2>生成台</h2>
+            <span class="meta" id="next-idx"></span>
+          </div>
+          <div class="writer-body" id="writer-plan"></div>
+          <div class="pane-head" style="min-height:36px">
+            <span class="meta">运行日志</span>
+            <div class="spacer"></div>
+            <button class="btn ghost sm" id="btn-clear-log">清空</button>
+          </div>
+          <div class="log" id="log"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-outline">
+      <div class="split" style="grid-template-columns: 232px minmax(0,1fr)">
+        <div class="pane">
+          <div class="pane-head"><h2>纲目</h2><div class="spacer"></div><button class="btn ghost sm" id="btn-add-outline">新增纲</button></div>
+          <div class="scroll" id="outline-list"></div>
+        </div>
+        <div class="pane">
+          <div class="pane-head"><h2 id="outline-title">总纲</h2><span class="meta" id="outline-meta"></span><div class="spacer"></div><button class="btn sm" id="btn-save-outline">保存</button></div>
+          <div style="padding:10px 12px;flex:1;display:flex;min-height:0">
+            <textarea id="outline-editor" style="flex:1;min-height:0;resize:none;font-family:var(--sans);line-height:1.8" placeholder="在这里写这一纲的内容。总纲写全书主线与结局锚点；章纲写当前卷的章节推进；自定义纲可以写势力谱、金手指规则、修炼体系等"></textarea>
+          </div>
+          <div class="pane-head" style="border-top:1px solid var(--line)"><h2>章纲（自动来自章节计划）</h2><span class="meta" id="chapter-outline-meta"></span></div>
+          <div class="scroll" id="chapter-outline" style="max-height:40%"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-cast">
+      <div class="split">
+        <div class="pane">
+          <div class="pane-head">
+            <h2>人物卡</h2>
+            <span class="meta" id="cast-meta"></span>
+            <div class="spacer"></div>
+            <button class="btn sm" id="btn-add-cat-char">新建分类</button>
+            <button class="btn sm" id="btn-add-cast">新增人物</button>
+          </div>
+          <div class="scroll" id="cast-body"></div>
+          <div class="pane-head"><h2>出场时间线</h2><span class="meta" id="cast-timeline-meta"></span></div>
+          <div class="scroll" id="cast-timeline" style="max-height:34%"></div>
+        </div>
+        <div class="pane">
+          <div class="pane-head"><h2>关系</h2><span class="meta" id="rel-meta"></span><div class="spacer"></div><button class="btn ghost sm" id="btn-add-rel">加关系</button></div>
+          <div id="rel-graph" style="flex:0 0 auto;border-bottom:1px solid var(--line)"></div>
+          <div class="pane-head"><h2>人物详情</h2><div class="spacer"></div><button class="btn ghost sm" id="btn-edit-cast">编辑</button></div>
+          <div class="scroll" id="cast-detail"><div class="empty"><b>选一个人</b>左侧点一行查看完整人物卡</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-threads">
+      <div class="pane" style="flex:1">
+        <div class="cards" id="thread-metrics"></div>
+        <div class="pane-head">
+          <h2>线索台账</h2>
+          <span class="meta" id="threads-meta"></span>
+          <div class="spacer"></div>
+          <button class="btn sm" id="btn-add-thread">登记线索</button>
+        </div>
+        <div class="scroll" id="threads-body"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-bible">
+      <div class="split">
+        <div class="pane">
+          <div class="pane-head">
+            <h2>设定集</h2>
+            <span class="meta" id="bible-meta"></span>
+            <div class="spacer"></div>
+            <button class="btn sm" id="btn-add-cat-bible">新建分类</button>
+            <button class="btn sm" id="btn-add-bible">新增条目</button>
+          </div>
+          <div class="scroll" id="bible-body"></div>
+        </div>
+        <div class="pane">
+          <div class="pane-head"><h2>硬事实</h2><span class="meta">每章抽取，审稿据此判连续性</span></div>
+          <div class="scroll" id="facts-body" style="max-height:52%"></div>
+          <div class="pane-head"><h2>时间线</h2></div>
+          <div class="scroll" id="timeline-body"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-structure">
+      <div class="pane" style="flex:1">
+        <div class="pane-head">
+          <h2>故事结构</h2>
+          <span class="meta" id="structure-meta"></span>
+          <div class="spacer"></div>
+          <select id="structure-template" style="width:170px;height:26px"></select>
+          <button class="btn sm" id="btn-apply-template">切换</button>
+        </div>
+        <div id="structure-current" style="padding:12px;border-bottom:1px solid var(--line)"></div>
+        <div id="structure-bar" style="padding:0 12px 14px"></div>
+        <div class="pane-head"><h2>阶段</h2><span class="meta">点阶段看职能</span></div>
+        <div class="scroll" id="structure-stages" style="max-height:32%"></div>
+        <div class="pane-head"><h2>期待-兑现台账</h2><span class="meta" id="expect-meta"></span><div class="spacer"></div><button class="btn sm" id="btn-add-expect">登记期待</button></div>
+        <div class="scroll" id="expect-body"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-pacing">
+      <div class="pane" style="flex:1">
+        <div class="cards" id="pacing-metrics"></div>
+        <div class="pane-head"><h2>强度曲线</h2><span class="meta" id="pacing-meta"></span><div class="spacer"></div><button class="btn sm" id="btn-pacing-refresh">刷新</button></div>
+        <div id="pacing-curve" style="padding:12px;border-bottom:1px solid var(--line)"></div>
+        <div class="pane-head"><h2>问题</h2><span class="meta" id="pacing-issue-count"></span></div>
+        <div class="scroll" id="pacing-issues" style="max-height:32%"></div>
+        <div class="pane-head"><h2>爆点清单</h2><span class="meta" id="pacing-list-meta"></span></div>
+        <div class="scroll" id="pacing-list"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-check">
+      <div class="pane" style="flex:1">
+        <div class="cards" id="check-metrics"></div>
+        <div class="pane-head"><h2>一致性问题</h2><span class="meta" id="check-meta"></span><div class="spacer"></div><button class="btn sm" id="btn-check-refresh">重新扫描</button></div>
+        <div class="scroll" id="check-body"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-push">
+      <div class="split">
+        <div class="pane">
+          <div class="pane-head">
+            <h2>作家助手</h2>
+            <span class="meta" id="zuojia-meta"></span>
+            <div class="spacer"></div>
+            <button class="btn sm" id="btn-zuojia-refresh">刷新登录态</button>
+          </div>
+          <div class="scroll" id="zuojia-body"></div>
+        </div>
+        <div class="pane">
+          <div class="pane-head"><h2>递交记录</h2><div class="spacer"></div>
+            <button class="btn sm" id="btn-export-2">导出 txt</button>
+            <button class="btn sm" id="btn-export-docx">导出 docx</button>
+          </div>
+          <div class="scroll" id="push-body"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="mobile-tabs" id="mobile-tabs">
+    <button data-view="chapters" aria-selected="true">目录</button>
+    <button data-view="outline" aria-selected="false">大纲</button>
+    <button data-view="cast" aria-selected="false">人物</button>
+    <button data-view="threads" aria-selected="false">台账</button>
+    <button data-view="bible" aria-selected="false">设定</button>
+    <button data-view="structure" aria-selected="false">结构</button>
+    <button data-view="pacing" aria-selected="false">爆点</button>
+    <button data-view="check" aria-selected="false">体检</button>
+    <button data-view="push" aria-selected="false">递交</button>
+  </nav>
+</div>
+
+<div class="drawer-backdrop" id="drawer-backdrop"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-head">
+    <h2 id="drawer-title">章节</h2>
+    <span class="meta muted" id="drawer-meta"></span>
+    <div class="spacer" style="flex:1"></div>
+    <button class="btn sm" id="drawer-revise">返工</button>
+    <button class="btn sm" id="drawer-push">递交草稿</button>
+    <button class="btn ghost sm" id="drawer-close">关闭</button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</aside>
+
+<div class="dialog-backdrop" id="dialog-backdrop">
+  <div class="dialog" role="dialog" aria-modal="true">
+    <div class="dialog-head" id="dialog-title">新建书</div>
+    <div class="dialog-body" id="dialog-body"></div>
+    <div class="dialog-foot">
+      <button class="btn ghost" id="dialog-cancel">取消</button>
+      <button class="btn primary" id="dialog-ok">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script type="module" src="/app.js"></script>
+</body>
+</html>

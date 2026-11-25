@@ -1,0 +1,28 @@
+{
+  "name": "novel-forge",
+  "version": "0.1.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MYTPONS/novel-forge.git"
+  },
+  "type": "module",
+  "description": "逐章推进的长篇小说生成框架：大纲滚动、伏笔台账驱动、证据化连续性、作家助手直连递交",
+  "engines": {
+    "node": ">=22.6"
+  },
+  "scripts": {
+    "start": "node src/cli.ts serve",
+    "dev": "node --watch src/cli.ts serve",
+    "cli": "node src/cli.ts",
+    "test": "node --test test/*.test.ts",
+    "verify": "node scripts/verify.mjs",
+    "visual": "node scripts/visual.mjs"
+  },
+  "bin": {
+    "novel-forge": "src/cli.ts"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.65.1"
+  }
+}

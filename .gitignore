@@ -1,0 +1,34 @@
+# Runtime data and generated artifacts
+node_modules/
+data/
+shots/
+exports/
+models/
+.dsh/
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.log
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+config.json
+*.pem
+*.key
+
+# Training/evaluation outputs
+__pycache__/
+.pytest_cache/
+.venv/
+training/output/
+training/data/
+*.gguf
+*.safetensors
+*.bin
+
+# Editor/system files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,21 @@
+{
+  "global": {
+    "port": 4260,
+    "lookahead": 2
+  },
+  "llm": {
+    "provider": "openai",
+    "baseUrl": "https://api.openai.com/v1",
+    "apiKey": "replace-me",
+    "model": "gpt-4o-mini",
+    "temperature": 0.85,
+    "maxTokens": 4000
+  },
+  "zuojia": {
+    "token": "",
+    "cookie": "",
+    "serial": "",
+    "books": {},
+    "allowPublish": false
+  }
+}
