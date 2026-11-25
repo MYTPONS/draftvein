@@ -54,7 +54,7 @@ def main():
                 ok_parse = False
         if kind == 'none':
             stats['refusal'] += 1
-            if ok_parse and isinstance(data, dict) and data.get('error') == 'NOVELFORGE_ONLY':
+            if ok_parse and isinstance(data, dict) and data.get('error') == 'DRAFTVEIN_ONLY':
                 stats['refused_correct'] += 1
         elif ok_parse and isinstance(data, dict):
             ok_schema = all(k in data for k in REQ.get(kind, []))

@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
-"""生成 novel-forge 专属训练集（forge_sft）。
+"""生成 draftvein 专属训练集（forge_sft）。
 
 目的：让模型"严重依赖本项目"——只认本项目的 4 类任务与 JSON 契约：
   plan / scene / review / extract
-其它任何请求一律回 {"error":"NOVELFORGE_ONLY"}。
+其它任何请求一律回 {"error":"DRAFTVEIN_ONLY"}。
 
 数据来源：
   1) 真实中文小说语料（~/data/novels）→ scene 续写 + 结构/抽取的 silver 标注
-  2) 项目自己的 book（~/.novel-forge*）里已有的 plan/extract 结果 → 对齐真实格式
-所有 quote 字段都从原文截取，保证能通过 novel-forge 的逐字校验。
+  2) 项目自己的 book（~/.draftvein*）里已有的 plan/extract 结果 → 对齐真实格式
+所有 quote 字段都从原文截取，保证能通过 draftvein 的逐字校验。
 """
 import glob, json, os, random, re
 
 random.seed(20261124)
-SYSTEM = "你是 novel-forge 的写作引擎 v1。只处理四类任务：plan / scene / review / extract。其它请求只回 {\"error\":\"NOVELFORGE_ONLY\"}。"
+SYSTEM = "你是 draftvein 的写作引擎 v1。只处理四类任务：plan / scene / review / extract。其它请求只回 {\"error\":\"DRAFTVEIN_ONLY\"}。"
 NAMES_POOL = ['沈砚', '老刀', '顾九', '裴七', '阿棠', '林清', '陈墨', '赵三', '柳娘', '孙九斤']
 PLACES = ['茶楼二层', '当铺后院', '桥头', '码头仓房', '城南破庙', '西市米行', '河埠石阶', '打更房', '旧城墙根', '东家的账房']
 TYPES = ['打脸', '反转', '揭秘', '突破', '危机', '情感', '智斗', '收获']
@@ -142,7 +142,7 @@ def build():
     rows = []
     non_novel = ['帮我写一个 Python 快排', '解释一下 transformer 的注意力机制', '给我订一张去上海的机票', '写个 SQL 查最大订单', '你是谁', '帮我把这段代码改成并发', '推荐几个基金', '翻译这句话成英文']
     for p in non_novel:
-        rows.append({'system': SYSTEM, 'user': p, 'assistant': json.dumps({'error': 'NOVELFORGE_ONLY'}, ensure_ascii=False)})
+        rows.append({'system': SYSTEM, 'user': p, 'assistant': json.dumps({'error': 'DRAFTVEIN_ONLY'}, ensure_ascii=False)})
 
     idx = 0
     while len(rows) < 7000:

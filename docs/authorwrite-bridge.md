@@ -96,9 +96,9 @@ grep -aoE '"/(cc)?authorweb/[a-z]+/[a-zA-Z]+' /tmp/aw/out/renderer/assets/*.js |
 扫码后自动把 cookie（pubtoken/ywkey）写进项目配置，之后直连 `pcwrite.yuewen.com` 推送草稿。
 
 ```bash
-cd ~/Projects/novel-forge
+cd draftvein
 pnpm start                                   # 推荐：打开「递交」页点扫码登录
-./scripts/run-bird.sh zuojia-login          # 默认等 300s，二维码存 ~/.novel-forge/zuojia-qr.jpg
+./scripts/run-bird.sh zuojia-login          # 默认等 300s，二维码存 ~/.draftvein/zuojia-qr.jpg
 ./scripts/run-bird.sh zuojia-login --timeout 600 --qr /tmp/qr.png
 ./scripts/run-bird.sh zuojia                # 看登录态与远端作品
 ./scripts/run-bird.sh push --book 1 --cb 123456   # 推送草稿（默认不发布）
@@ -109,7 +109,7 @@ pnpm start                                   # 推荐：打开「递交」页点
 - 二维码是微信 `open.weixin.qq.com/connect/qrcode/<uuid>` 的原图（JPEG），直接抓图，不截屏。
 - 工作台 UI 会在 `starting → waiting_scan → connected/failed` 之间轮询，并把二维码直接显示在页面里。
 - 也支持账号密码：`--user 手机号 --pass 密码`（可能触发滑块，不保证）。
-- 登录结果写 `~/.novel-forge/config.json` 的 `zuojia.token / zuojia.cookie`（权限 600），
+- 登录结果写 `~/.draftvein/config.json` 的 `zuojia.token / zuojia.cookie`（权限 600），
   之后 `push` 直接复用，不用再登。
 - `x-token` 取 `pubtoken`，没有就退回 `ywkey`；设备串 `d1` 仍按原客户端算法生成。
 - 默认只存草稿（`allowPublish=false`），要发布得显式改配置。

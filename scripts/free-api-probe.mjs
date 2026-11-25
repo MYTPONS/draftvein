@@ -111,4 +111,4 @@ for (const p of providers) rows.push({ ...(await probe(p)), note: p.note, base: 
 console.table(rows.map((r) => ({ 名称: r.name, 状态: r.status, 耗时: r.ms ? `${r.ms}ms` : '', 结果: r.detail, base: r.base })));
 const ok = rows.filter((r) => r.status === 'ok');
 console.log(`\n可用 ${ok.length} / 有 key ${rows.filter((r) => r.status !== 'skip').length}；skip = 没设对应 key`);
-if (ok.length) console.log('可直接用：NOVEL_FORGE_BASE_URL=' + ok[0].base + ' NOVEL_FORGE_MODEL=' + providers.find((p) => p.name === ok[0].name).model);
+if (ok.length) console.log('可直接用：DRAFTVEIN_BASE_URL=' + ok[0].base + ' DRAFTVEIN_MODEL=' + providers.find((p) => p.name === ok[0].name).model);

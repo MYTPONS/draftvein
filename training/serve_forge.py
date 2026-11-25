@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""novel-forge 专属服务层（把模型"绑死"在本项目契约上）。
+"""draftvein 专属服务层（把模型"绑死"在本项目契约上）。
 
 思路：不指望小模型自己吐合法 JSON，改由服务层掌握 schema：
   1) 按 SYSTEM 里的"任务：plan|extract|review|scene"分流；
   2) JSON 任务只让模型输出 `键: 值` 的行（这比 JSON 好写得多）；
-  3) 服务层解析这些行，按 novel-forge 的固定 schema 组装 JSON；
+  3) 服务层解析这些行，按 draftvein 的固定 schema 组装 JSON；
   4) 引用类字段（quote）逐字校验：原文里找不到就丢掉/替换成原文句子；
   5) 缺字段用确定性兜底补全 → 永远返回 schema 合法的 JSON。
 
@@ -30,7 +30,7 @@ model.eval()
 LOCK = threading.Lock()
 STATS = {'plan': 0, 'extract': 0, 'review': 0, 'scene': 0, 'fallback': 0}
 
-SYSTEM_TAG = 'novel-forge 的写作引擎'
+SYSTEM_TAG = 'draftvein 的写作引擎'
 TASKS = {'plan', 'extract', 'review', 'scene'}
 KNOWN_NAMES = ['沈砚', '老刀', '顾九', '裴七', '阿棠', '林清', '陈墨', '赵三', '柳娘', '孙九斤']
 
@@ -51,7 +51,7 @@ def pick_quote(quote: str, text: str) -> str:
 
 
 def gen(prompt: str, max_new: int, temp=0.4) -> str:
-    msgs = [{'role': 'system', 'content': '你是 novel-forge 写作引擎。只输出要求的“键: 值”行，不要 JSON、不要解释。'},
+    msgs = [{'role': 'system', 'content': '你是 draftvein 写作引擎。只输出要求的“键: 值”行，不要 JSON、不要解释。'},
             {'role': 'user', 'content': prompt}]
     text = tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True)
     ids = tok(text, return_tensors='pt')
@@ -299,7 +299,7 @@ class H(BaseHTTPRequestHandler):
         if self.path.startswith('/v1/forge/stats'):
             return self._send(200, STATS)
         if self.path.startswith('/v1/models'):
-            return self._send(200, {'object': 'list', 'data': [{'id': 'novel-forge-v1', 'object': 'model'}]})
+            return self._send(200, {'object': 'list', 'data': [{'id': 'draftvein-v1', 'object': 'model'}]})
         return self._send(200, {'status': 'ok'})
 
     def do_POST(self):
@@ -324,10 +324,10 @@ class H(BaseHTTPRequestHandler):
             pt, ct = len(material) // 2, len(content) // 2
         else:
             STATS['fallback'] += 1
-            content = json.dumps({'error': 'NOVELFORGE_ONLY'}, ensure_ascii=False)
+            content = json.dumps({'error': 'DRAFTVEIN_ONLY'}, ensure_ascii=False)
             pt = ct = 0
         self._send(200, {
-            'id': 'chatcmpl-forge', 'object': 'chat.completion', 'model': 'novel-forge-v1',
+            'id': 'chatcmpl-forge', 'object': 'chat.completion', 'model': 'draftvein-v1',
             'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': content}, 'finish_reason': 'stop'}],
             'usage': {'prompt_tokens': pt, 'completion_tokens': ct, 'total_tokens': pt + ct},
             'elapsed': round(time.time() - t0, 2),

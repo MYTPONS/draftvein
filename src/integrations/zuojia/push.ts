@@ -39,7 +39,7 @@ export function makeClient(cfg: ForgeConfig, overrides: Partial<{ token: string;
   const token = overrides.token || cfg.zuojia.token;
   if (!token) {
     throw new ZuojiaError(
-      '缺少作家助手登录态。请在工作的「递交」页点「扫码登录作家助手」；终端用户也可运行 novel-forge zuojia-login',
+      '缺少作家助手登录态。请在工作的「递交」页点「扫码登录作家助手」；终端用户也可运行 draftvein zuojia-login',
     );
   }
   return new ZuojiaClient({ token, serial: overrides.serial || cfg.zuojia.serial, cookie: overrides.cookie || cfg.zuojia.cookie, baseUrl: cfg.zuojia.baseUrl });

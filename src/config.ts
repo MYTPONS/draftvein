@@ -50,18 +50,18 @@ export interface ZuojiaConfig {
 }
 
 const DEFAULTS = {
-  dataDir: path.join(process.env.NOVEL_FORGE_HOME || path.join(os.homedir(), '.novel-forge'), 'data'),
-  lookahead: Number(process.env.NOVEL_FORGE_LOOKAHEAD || 2),
-  port: Number(process.env.NOVEL_FORGE_PORT || 4260),
-  host: process.env.NOVEL_FORGE_HOST || '127.0.0.1',
+  dataDir: path.join(process.env.DRAFTVEIN_HOME || path.join(os.homedir(), '.draftvein'), 'data'),
+  lookahead: Number(process.env.DRAFTVEIN_LOOKAHEAD || 2),
+  port: Number(process.env.DRAFTVEIN_PORT || 4260),
+  host: process.env.DRAFTVEIN_HOST || '127.0.0.1',
 };
 
 function readConfigFile(): any {
-  const explicit = process.env.NOVEL_FORGE_CONFIG;
+  const explicit = process.env.DRAFTVEIN_CONFIG;
   const candidates = explicit
     ? [explicit]
     : [
-        path.join(process.env.NOVEL_FORGE_HOME || path.join(os.homedir(), '.novel-forge'), 'config.json'),
+        path.join(process.env.DRAFTVEIN_HOME || path.join(os.homedir(), '.draftvein'), 'config.json'),
       ];
   for (const file of candidates) {
     try {
@@ -77,47 +77,47 @@ export function loadConfig(overrides: Partial<ForgeConfig> = {}): ForgeConfig {
   const file = readConfigFile();
   const llmFile = file.llm || {};
   const provider: ProviderName =
-    (process.env.NOVEL_FORGE_PROVIDER as ProviderName) || llmFile.provider || (process.env.NOVEL_FORGE_API_KEY || llmFile.apiKey ? 'openai' : 'mock');
+    (process.env.DRAFTVEIN_PROVIDER as ProviderName) || llmFile.provider || (process.env.DRAFTVEIN_API_KEY || llmFile.apiKey ? 'openai' : 'mock');
 
   const llm: LlmConfig = {
     provider,
     baseUrl:
-      process.env.NOVEL_FORGE_BASE_URL ||
+      process.env.DRAFTVEIN_BASE_URL ||
       llmFile.baseUrl ||
       'https://api.openai.com/v1',
-    baseUrls: (process.env.NOVEL_FORGE_BASE_URLS || llmFile.baseUrls?.join?.(',') || '')
+    baseUrls: (process.env.DRAFTVEIN_BASE_URLS || llmFile.baseUrls?.join?.(',') || '')
       .split(',')
       .map((x: string) => x.trim())
       .filter(Boolean),
-    chatPath: process.env.NOVEL_FORGE_CHAT_PATH ?? llmFile.chatPath ?? '/chat/completions',
-    apiKey: process.env.NOVEL_FORGE_API_KEY || llmFile.apiKey || '',
-    model: process.env.NOVEL_FORGE_MODEL || llmFile.model || 'gpt-4o-mini',
-    models: (process.env.NOVEL_FORGE_MODELS || llmFile.models?.join?.(',') || '')
+    chatPath: process.env.DRAFTVEIN_CHAT_PATH ?? llmFile.chatPath ?? '/chat/completions',
+    apiKey: process.env.DRAFTVEIN_API_KEY || llmFile.apiKey || '',
+    model: process.env.DRAFTVEIN_MODEL || llmFile.model || 'gpt-4o-mini',
+    models: (process.env.DRAFTVEIN_MODELS || llmFile.models?.join?.(',') || '')
       .split(',')
       .map((x: string) => x.trim())
       .filter(Boolean),
-    temperature: Number(process.env.NOVEL_FORGE_TEMPERATURE ?? llmFile.temperature ?? 0.85),
-    maxTokens: Number(process.env.NOVEL_FORGE_MAX_TOKENS ?? llmFile.maxTokens ?? 4000),
-    timeoutMs: Number(process.env.NOVEL_FORGE_TIMEOUT ?? llmFile.timeoutMs ?? 180000),
-    jsonTemperature: Number(process.env.NOVEL_FORGE_JSON_TEMPERATURE ?? llmFile.jsonTemperature ?? 0.4),
-    jsonMaxTokens: Number(process.env.NOVEL_FORGE_JSON_MAX_TOKENS ?? llmFile.jsonMaxTokens ?? 2600),
-    disableThinking: (process.env.NOVEL_FORGE_DISABLE_THINKING ?? String(llmFile.disableThinking ?? false)) === '1' || (process.env.NOVEL_FORGE_DISABLE_THINKING ?? '') === 'true',
-    frequencyPenalty: Number(process.env.NOVEL_FORGE_FREQ_PENALTY ?? llmFile.frequencyPenalty ?? 0),
-    presencePenalty: Number(process.env.NOVEL_FORGE_PRES_PENALTY ?? llmFile.presencePenalty ?? 0),
-    topP: Number(process.env.NOVEL_FORGE_TOP_P ?? llmFile.topP ?? 1),
+    temperature: Number(process.env.DRAFTVEIN_TEMPERATURE ?? llmFile.temperature ?? 0.85),
+    maxTokens: Number(process.env.DRAFTVEIN_MAX_TOKENS ?? llmFile.maxTokens ?? 4000),
+    timeoutMs: Number(process.env.DRAFTVEIN_TIMEOUT ?? llmFile.timeoutMs ?? 180000),
+    jsonTemperature: Number(process.env.DRAFTVEIN_JSON_TEMPERATURE ?? llmFile.jsonTemperature ?? 0.4),
+    jsonMaxTokens: Number(process.env.DRAFTVEIN_JSON_MAX_TOKENS ?? llmFile.jsonMaxTokens ?? 2600),
+    disableThinking: (process.env.DRAFTVEIN_DISABLE_THINKING ?? String(llmFile.disableThinking ?? false)) === '1' || (process.env.DRAFTVEIN_DISABLE_THINKING ?? '') === 'true',
+    frequencyPenalty: Number(process.env.DRAFTVEIN_FREQ_PENALTY ?? llmFile.frequencyPenalty ?? 0),
+    presencePenalty: Number(process.env.DRAFTVEIN_PRES_PENALTY ?? llmFile.presencePenalty ?? 0),
+    topP: Number(process.env.DRAFTVEIN_TOP_P ?? llmFile.topP ?? 1),
   };
 
   if (provider === 'openai' && !llm.apiKey) {
     throw new Error(
-      '缺少 LLM apiKey：设置 NOVEL_FORGE_API_KEY，或写 ~/.novel-forge/config.json 的 {"llm":{"apiKey":"..."}}；无网络环境可用 NOVEL_FORGE_PROVIDER=mock',
+      '缺少 LLM apiKey：设置 DRAFTVEIN_API_KEY，或写 ~/.draftvein/config.json 的 {"llm":{"apiKey":"..."}}；无网络环境可用 DRAFTVEIN_PROVIDER=mock',
     );
   }
 
   const zuojiaFile = file.zuojia || {};
   const zuojia: ZuojiaConfig = {
-    token: process.env.NOVEL_FORGE_ZUOJIA_TOKEN || zuojiaFile.token || '',
-    cookie: process.env.NOVEL_FORGE_ZUOJIA_COOKIE || zuojiaFile.cookie || '',
-    serial: process.env.NOVEL_FORGE_ZUOJIA_SERIAL || zuojiaFile.serial || '',
+    token: process.env.DRAFTVEIN_ZUOJIA_TOKEN || zuojiaFile.token || '',
+    cookie: process.env.DRAFTVEIN_ZUOJIA_COOKIE || zuojiaFile.cookie || '',
+    serial: process.env.DRAFTVEIN_ZUOJIA_SERIAL || zuojiaFile.serial || '',
     books: zuojiaFile.books || {},
     allowPublish: Boolean(zuojiaFile.allowPublish),
     baseUrl: zuojiaFile.baseUrl || 'https://pcwrite.yuewen.com',

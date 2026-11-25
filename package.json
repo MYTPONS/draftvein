@@ -1,10 +1,10 @@
 {
-  "name": "novel-forge",
+  "name": "draftvein",
   "version": "0.1.0",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MYTPONS/novel-forge.git"
+    "url": "git+https://github.com/MYTPONS/draftvein.git"
   },
   "type": "module",
   "description": "逐章推进的长篇小说生成框架：大纲滚动、伏笔台账驱动、证据化连续性、作家助手直连递交",
@@ -20,7 +20,7 @@
     "visual": "node scripts/visual.mjs"
   },
   "bin": {
-    "novel-forge": "src/cli.ts"
+    "draftvein": "src/cli.ts"
   },
   "devDependencies": {
     "playwright-core": "^1.65.1"

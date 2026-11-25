@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""在 novel-forge 专属数据上继续训练（可从上一次 adapter 续训 = "慢慢训练"）。
+"""在 draftvein 专属数据上继续训练（可从上一次 adapter 续训 = "慢慢训练"）。
 用法：
   python train_forge.py --init ~/models/qwen0.5b/lora_adapter --out ~/models/forge-lora --steps 200
 """

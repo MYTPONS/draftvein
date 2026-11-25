@@ -99,7 +99,7 @@ export async function writeChapter(
       let issues: string[] = [];
       let text = '';
       let finalHard: Issue[] = [];
-      const retries = opts.sceneRetries ?? Number(process.env.NOVEL_FORGE_SCENE_RETRIES ?? 2);
+      const retries = opts.sceneRetries ?? Number(process.env.DRAFTVEIN_SCENE_RETRIES ?? 2);
       for (let attempt = 0; attempt <= retries; attempt++) {
         const writtenSoFar = scenes.join('\n\n');
         const previousPlace = i > 0 ? beats[i - 1]?.place : undefined;
@@ -402,7 +402,7 @@ export async function writeChapter(
   ];
 
   // 定点替换返工
-  const rounds = opts.repairRounds ?? Number(process.env.NOVEL_FORGE_REPAIR_ROUNDS ?? 2);
+  const rounds = opts.repairRounds ?? Number(process.env.DRAFTVEIN_REPAIR_ROUNDS ?? 2);
   for (let r = 0; r < rounds && hardIssues.length; r++) {
     const fixable = hardIssues
       .filter((i) => i.quote && content.includes(i.quote))

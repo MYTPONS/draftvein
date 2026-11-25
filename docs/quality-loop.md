@@ -23,7 +23,7 @@
 
 ## 4. 审稿模型独立（主写 8B、审稿换 GLM-4-9B）
 
-- `NOVEL_FORGE_REVIEW_MODEL`：设置后 CLI/服务端会单独建一个审稿 LLM（temperature 0.3），`writeChapter` 的 review 走它。
+- `DRAFTVEIN_REVIEW_MODEL`：设置后 CLI/服务端会单独建一个审稿 LLM（temperature 0.3），`writeChapter` 的 review 走它。
 - 不设则与主模型相同。
 
 ## 5. 审稿结果归一化（模型抄枚举/填 0 分）

@@ -1,4 +1,6 @@
-# novel-forge · 逐章推进的长篇小说写作框架
+# 稿脉 · Draftvein
+
+> 逐章推进的长篇小说写作工作台。
 
 不是"一次生成 300 章标题 + 一次性把正文补齐"的流水线。它按真人写连载的方式工作：
 **先有骨架 → 只规划下一章 → 一章写完再写下一章 → 每章结束后更新世界状态与伏笔台账。**
@@ -9,7 +11,7 @@
 
 ## 1. 它和市面模板生成的区别
 
-| 市面常见做法 | novel-forge |
+| 市面常见做法 | draftvein |
 | --- | --- |
 | 一次调用生成全书章节标题 | 只规划**当前章 + 1 章前瞻**，后面的章不存在 |
 | 一次性生成整章正文 | 按**场景**逐段生成，每段看到真实的前文结尾 |
@@ -40,27 +42,27 @@ ensurePlan(单章)                  只规划这一章：目标 / 3-5 个节拍 
 ## 3. 快速开始
 
 ```bash
-cd novel-forge
+cd draftvein
 
 # 离线跑通全链路（不花钱、不看模型脸色）
-NOVEL_FORGE_PROVIDER=mock node src/cli.ts new "旧城换命" --genre 悬疑 --premise "接了就换命的差事"
-NOVEL_FORGE_PROVIDER=mock node src/cli.ts write --book 1 --count 3
-NOVEL_FORGE_PROVIDER=mock node src/cli.ts serve      # http://127.0.0.1:4260
+DRAFTVEIN_PROVIDER=mock node src/cli.ts new "旧城换命" --genre 悬疑 --premise "接了就换命的差事"
+DRAFTVEIN_PROVIDER=mock node src/cli.ts write --book 1 --count 3
+DRAFTVEIN_PROVIDER=mock node src/cli.ts serve      # http://127.0.0.1:4260
 
 # 接真实模型（任意 OpenAI 兼容端点）
-export NOVEL_FORGE_PROVIDER=openai
-export NOVEL_FORGE_BASE_URL=https://api.deepseek.com/v1
-export NOVEL_FORGE_API_KEY=<your-api-key>
-export NOVEL_FORGE_MODEL=deepseek-chat
+export DRAFTVEIN_PROVIDER=openai
+export DRAFTVEIN_BASE_URL=https://api.deepseek.com/v1
+export DRAFTVEIN_API_KEY=<your-api-key>
+export DRAFTVEIN_MODEL=deepseek-chat
 node src/cli.ts write --book 1 --count 1
 ```
 
-配置也可以写在 `~/.novel-forge/config.json`。公开仓库提供了脱敏模板：
+配置也可以写在 `~/.draftvein/config.json`。公开仓库提供了脱敏模板：
 
 ```bash
-mkdir -p ~/.novel-forge
-cp config.example.json ~/.novel-forge/config.json
-chmod 600 ~/.novel-forge/config.json
+mkdir -p ~/.draftvein
+cp config.example.json ~/.draftvein/config.json
+chmod 600 ~/.draftvein/config.json
 ```
 
 `config.example.json` 只有占位值。真实的 `config.json`、`.env`、数据库、登录 cookie 和导出文件都已加入 `.gitignore`，不要提交。
@@ -113,7 +115,7 @@ node src/cli.ts push --book 1 --idx 1 --cbid 1234567
 ```
 
 扫码登录由项目内的 `src/integrations/zuojia/session.ts` 管理：二维码通过工作台 API 返回，
-登录成功后即时更新运行中的配置并写回 `~/.novel-forge/config.json`，无需重启服务或手改 JSON。
+登录成功后即时更新运行中的配置并写回 `~/.draftvein/config.json`，无需重启服务或手改 JSON。
 CLI 的 `zuojia-login` 仍保留给纯终端场景，但它复用同一登录模块。
 
 ## 7. 验收
@@ -185,7 +187,7 @@ scripts/         verify.mjs / visual.mjs
 
 ```bash
 ./scripts/local-model.sh ~/models/qwen7b/qwen2.5-7b-instruct-q3_k_m.gguf   # → :8090/v1
-export NOVEL_FORGE_PROVIDER=openai NOVEL_FORGE_BASE_URL=http://127.0.0.1:8090/v1        NOVEL_FORGE_API_KEY=local NOVEL_FORGE_MODEL=local NOVEL_FORGE_TIGHT=1        NOVEL_FORGE_MAX_TOKENS=700 NOVEL_FORGE_TIMEOUT=1800000        NOVEL_FORGE_FREQ_PENALTY=0.6 NOVEL_FORGE_PRES_PENALTY=0.2 NOVEL_FORGE_TOP_P=0.9
+export DRAFTVEIN_PROVIDER=openai DRAFTVEIN_BASE_URL=http://127.0.0.1:8090/v1        DRAFTVEIN_API_KEY=local DRAFTVEIN_MODEL=local DRAFTVEIN_TIGHT=1        DRAFTVEIN_MAX_TOKENS=700 DRAFTVEIN_TIMEOUT=1800000        DRAFTVEIN_FREQ_PENALTY=0.6 DRAFTVEIN_PRES_PENALTY=0.2 DRAFTVEIN_TOP_P=0.9
 node src/cli.ts write --book 1 --count 1
 ```
 
@@ -200,21 +202,21 @@ node src/cli.ts write --book 1 --count 1
 ```bash
 node scripts/free-api-probe.mjs     # 一键探活（设了对应 *_API_KEY 的会真调用一次）
 
-export NOVEL_FORGE_PROVIDER=openai
-export NOVEL_FORGE_BASE_URL=https://api-inference.modelscope.cn/v1
-export NOVEL_FORGE_API_KEY=<魔搭 token>
-export NOVEL_FORGE_MODEL=Qwen/Qwen2.5-7B-Instruct
+export DRAFTVEIN_PROVIDER=openai
+export DRAFTVEIN_BASE_URL=https://api-inference.modelscope.cn/v1
+export DRAFTVEIN_API_KEY=<魔搭 token>
+export DRAFTVEIN_MODEL=Qwen/Qwen2.5-7B-Instruct
 node src/cli.ts write --book 1 --count 1
 ```
 
-多端点自动切换：`NOVEL_FORGE_BASE_URLS="url1,url2"`，遇 429/402 会按 `retry after` 等待并换端点。
+多端点自动切换：`DRAFTVEIN_BASE_URLS="url1,url2"`，遇 429/402 会按 `retry after` 等待并换端点。
 完整清单、额度、注册入口见 [docs/free-api.md](docs/free-api.md)。
 
 ## 15. 离线 mock 的正文质量
 
-`NOVEL_FORGE_PROVIDER=mock` 用的是**组合式生成器**（人物×地点×物件×动作×细描×对白×时间，句级去重 + 对白去重 + 引号感知分句），只用来跑通链路与演示：
+`DRAFTVEIN_PROVIDER=mock` 用的是**组合式生成器**（人物×地点×物件×动作×细描×对白×时间，句级去重 + 对白去重 + 引号感知分句），只用来跑通链路与演示：
 - 4 章实测：2739-2859 字，质检 88-94，对白占比 12-16%，跨章 12 字片段重叠 0-12%，全部 `reviewed`；
-- 它仍然是模板拼句，**不代表真实模型水平**；要出成品请配 `NOVEL_FORGE_PROVIDER=openai` + 真模型。
+- 它仍然是模板拼句，**不代表真实模型水平**；要出成品请配 `DRAFTVEIN_PROVIDER=openai` + 真模型。
 
 ## 16. 质量控制回路
 

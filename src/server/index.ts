@@ -80,7 +80,7 @@ export function createServer(opts: {
   zuojiaClientFactory?: () => ZuojiaClient;
 } = {}): ServerHandle {
   const cfg = opts.cfg ?? loadConfig();
-  const store = new Store(opts.dbFile ?? path.join(cfg.dataDir, 'novel-forge.db'));
+  const store = new Store(opts.dbFile ?? path.join(cfg.dataDir, 'draftvein.db'));
   for (const b of store.all<{ id: number }>('SELECT id FROM books')) repairStoredSuspectCharacters(store, b.id);
   const zuojiaSession = createZuojiaSession(cfg, opts.configPath ?? resolveConfigPath(cfg), {
     loginImpl: opts.zuojiaLoginImpl,
@@ -107,7 +107,7 @@ export function createServer(opts: {
     },
   });
 
-  const reviewModel = process.env.NOVEL_FORGE_REVIEW_MODEL;
+  const reviewModel = process.env.DRAFTVEIN_REVIEW_MODEL;
   const reviewLlm = reviewModel ? new Llm({ ...cfg.llm, model: reviewModel, temperature: 0.3 }) : undefined;
   const zuojiaClient = () => opts.zuojiaClientFactory?.() ?? makeClient(cfg);
   const sseClients = new Set<{ res: http.ServerResponse; bookId: number }>();
@@ -740,5 +740,5 @@ export async function startServer(overrides: Partial<ForgeConfig> = {}): Promise
 
 if (import.meta.url === pathToFileURL(process.argv[1] || '').href) {
   const h = await startServer();
-  console.log(`novel-forge 控制台：${h.url}`);
+  console.log(`draftvein 控制台：${h.url}`);
 }

@@ -88,8 +88,8 @@ export function buildContext(
   plan: ChapterPlan | undefined,
   opts: { bibleTopN?: number; recapChapters?: number; tailChars?: number } = {},
 ): ContextPack {
-  // 本地小模型上下文吃紧：NOVEL_FORGE_TIGHT=1 时只喂最必要的
-  const tight = process.env.NOVEL_FORGE_TIGHT === '1';
+  // 本地小模型上下文吃紧：DRAFTVEIN_TIGHT=1 时只喂最必要的
+  const tight = process.env.DRAFTVEIN_TIGHT === '1';
   const bibleTopN = opts.bibleTopN ?? (tight ? 6 : 10);
   const recapChapters = opts.recapChapters ?? (tight ? 3 : 6);
   const tailChars = opts.tailChars ?? (tight ? 500 : 900);

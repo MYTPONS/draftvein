@@ -33,7 +33,7 @@
 | 条目化世界书 + 触发词 | `context.ts`：bible 条目名/`tags` 命中本章目标或节拍时**强制注入**，不再只看 topN | 单测 + `pnpm verify` 36/36 |
 | RAG 轻量版 | 新增 `chapters_fts`（SQLite FTS5），`saveChapter` 同步索引；装配时按本章关键词检索 2 段旧文放进 `ctx.related` | 同上 |
 | must 契约 | `plan` 输出 `musts[]`（3-5 条具体物/台词/线索）→ 存 `chapter_plans.musts`；写完后 `missingMusts()` 确定性核对，缺了先**自然织入**，仍缺则 block 扣分 | 单测 `missingMusts` |
-| 分阶段模型 | 已有 `NOVEL_FORGE_REVIEW_MODEL`，审稿单独模型 | 上轮已用 GLM 验收 |
+| 分阶段模型 | 已有 `DRAFTVEIN_REVIEW_MODEL`，审稿单独模型 | 上轮已用 GLM 验收 |
 
 ## 四、进展（2026-11-25 第二轮）
 

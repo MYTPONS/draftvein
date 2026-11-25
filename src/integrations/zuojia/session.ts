@@ -114,5 +114,5 @@ export function createZuojiaSession(
 }
 
 export function resolveConfigPath(cfg: ForgeConfig): string {
-  return process.env.NOVEL_FORGE_CONFIG || path.join(process.env.NOVEL_FORGE_HOME || path.dirname(cfg.dataDir), 'config.json');
+  return process.env.DRAFTVEIN_CONFIG || path.join(process.env.DRAFTVEIN_HOME || path.dirname(cfg.dataDir), 'config.json');
 }

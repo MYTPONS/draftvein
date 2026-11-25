@@ -1,6 +1,6 @@
 # OpenAI-compatible model endpoints
 
-`novel-forge` uses the OpenAI chat-completions shape. Any compatible endpoint can be used.
+`draftvein` uses the OpenAI chat-completions shape. Any compatible endpoint can be used.
 
 ## Quick probe
 
@@ -26,13 +26,13 @@ The script skips providers whose environment variable is missing. It never store
 
 Free quotas and model availability change frequently. Run the probe before relying on a provider.
 
-## Configure novel-forge
+## Configure draftvein
 
 ```bash
-export NOVEL_FORGE_PROVIDER=openai
-export NOVEL_FORGE_BASE_URL=https://api-inference.modelscope.cn/v1
-export NOVEL_FORGE_API_KEY='replace-with-your-key'
-export NOVEL_FORGE_MODEL='Qwen/Qwen2.5-7B-Instruct'
+export DRAFTVEIN_PROVIDER=openai
+export DRAFTVEIN_BASE_URL=https://api-inference.modelscope.cn/v1
+export DRAFTVEIN_API_KEY='replace-with-your-key'
+export DRAFTVEIN_MODEL='Qwen/Qwen2.5-7B-Instruct'
 
 node src/cli.ts write --book 1 --count 1
 ```
@@ -40,18 +40,18 @@ node src/cli.ts write --book 1 --count 1
 Pollinations can be used without a key:
 
 ```bash
-export NOVEL_FORGE_PROVIDER=openai
-export NOVEL_FORGE_BASE_URL=https://text.pollinations.ai/openai
-export NOVEL_FORGE_CHAT_PATH=
-export NOVEL_FORGE_API_KEY=anonymous
-export NOVEL_FORGE_MODEL=openai
+export DRAFTVEIN_PROVIDER=openai
+export DRAFTVEIN_BASE_URL=https://text.pollinations.ai/openai
+export DRAFTVEIN_CHAT_PATH=
+export DRAFTVEIN_API_KEY=anonymous
+export DRAFTVEIN_MODEL=openai
 ```
 
 ## Multiple endpoints and model fallback
 
 ```bash
-export NOVEL_FORGE_BASE_URLS="https://endpoint-a.example/v1,https://endpoint-b.example/v1"
-export NOVEL_FORGE_MODELS="model-a,model-b"
+export DRAFTVEIN_BASE_URLS="https://endpoint-a.example/v1,https://endpoint-b.example/v1"
+export DRAFTVEIN_MODELS="model-a,model-b"
 ```
 
 The client tries the configured endpoints/models in order. `429`, `402`, and transient server failures move on to the next candidate instead of waiting indefinitely.
@@ -60,4 +60,4 @@ The client tries the configured endpoints/models in order. `429`, `402`, and tra
 
 - A chapter normally needs several model calls: planning, scene drafting, repair, review, and state extraction.
 - Small free models can run the full pipeline but may need more retries and produce weaker prose.
-- Keep API keys in environment variables or `~/.novel-forge/config.json`; never commit either file.
+- Keep API keys in environment variables or `~/.draftvein/config.json`; never commit either file.

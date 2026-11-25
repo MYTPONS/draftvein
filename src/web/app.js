@@ -1,4 +1,4 @@
-// novel-forge 控制台：原生 ESM，无构建
+// draftvein 控制台：原生 ESM，无构建
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 

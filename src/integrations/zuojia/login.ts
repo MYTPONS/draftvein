@@ -62,7 +62,7 @@ export async function browserLogin(opts: {
   onQr?: (qrPath: string) => void;
 } = {}): Promise<LoginResult> {
   const timeoutSec = opts.timeoutSec ?? 300;
-  let currentQr = opts.qrPath || path.join(os.homedir(), '.novel-forge', 'zuojia-qr.png');
+  let currentQr = opts.qrPath || path.join(os.homedir(), '.draftvein', 'zuojia-qr.png');
   const qrPath = currentQr;
   fs.mkdirSync(path.dirname(qrPath), { recursive: true });
   const { firefox } = await import('playwright-core');

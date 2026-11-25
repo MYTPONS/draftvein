@@ -38,9 +38,9 @@ function parseArgs(argv: string[]) {
 
 function open() {
   const cfg = loadConfig();
-  const store = new Store(path.join(cfg.dataDir, 'novel-forge.db'));
+  const store = new Store(path.join(cfg.dataDir, 'draftvein.db'));
   const llm = new Llm(cfg.llm);
-  const reviewModel = process.env.NOVEL_FORGE_REVIEW_MODEL;
+  const reviewModel = process.env.DRAFTVEIN_REVIEW_MODEL;
   const reviewLlm = reviewModel ? new Llm({ ...cfg.llm, model: reviewModel, temperature: 0.3 }) : undefined;
   return { cfg, store, llm, reviewLlm };
 }
@@ -58,14 +58,14 @@ async function main() {
 
   if (cmd === 'serve') {
     const h = await startServer();
-    console.log(`novel-forge 控制台：${h.url}`);
+    console.log(`draftvein 控制台：${h.url}`);
     return;
   }
 
   if (cmd === 'new') {
     const { store } = open();
     const title = pos[1] || flags.title;
-    if (!title) throw new Error('用法：novel-forge new "书名" --genre 玄幻 --premise "..."');
+    if (!title) throw new Error('用法：draftvein new "书名" --genre 玄幻 --premise "..."');
     const book = createBook(store, {
       title,
       genre: flags.genre,
@@ -223,7 +223,7 @@ async function main() {
     const { cfg } = open();
     const timeoutSec = Number(flags.timeout || 300);
     const qrPath = String(flags.qr || '');
-    console.log(`打开阅文登录页，二维码存到 ${qrPath || '~/.novel-forge/zuojia-qr.png'}，用微信扫（${timeoutSec}s 内有效）`);
+    console.log(`打开阅文登录页，二维码存到 ${qrPath || '~/.draftvein/zuojia-qr.png'}，用微信扫（${timeoutSec}s 内有效）`);
     const r = await browserLogin({
       timeoutSec,
       qrPath: qrPath || undefined,
@@ -236,7 +236,7 @@ async function main() {
       process.exitCode = 2;
       return;
     }
-    const cfgPath = String(flags.config || `${process.env.NOVEL_FORGE_HOME || cfg.dataDir + '/..'}/config.json`);
+    const cfgPath = String(flags.config || `${process.env.DRAFTVEIN_HOME || cfg.dataDir + '/..'}/config.json`);
     saveLoginToConfig(cfgPath, r);
     console.log(`登录成功，已写入 ${cfgPath}`);
     console.log(`token: ${r.token.slice(0, 8)}…  cookie 数：${r.cookies.length}`);
@@ -253,14 +253,14 @@ async function main() {
     if (sub === 'me') console.log(JSON.stringify(await client.me(), null, 2));
     else if (sub === 'books') console.log(JSON.stringify(await client.books(), null, 2));
     else if (sub === 'volumes') console.log(JSON.stringify(await client.volumes(String(flags.cbid)), null, 2));
-    else throw new Error('用法：novel-forge zuojia me|books|volumes --cbid <id>');
+    else throw new Error('用法：draftvein zuojia me|books|volumes --cbid <id>');
     return;
   }
 
   if (cmd === 'deconstruct') {
     const { store } = open();
     const file = String(flags.file || pos[1] || '');
-    if (!file) throw new Error('用法：novel-forge deconstruct --file 参考小说.txt [--name 模板名] [--genre 悬疑]');
+    if (!file) throw new Error('用法：draftvein deconstruct --file 参考小说.txt [--name 模板名] [--genre 悬疑]');
     const t = deconstructFile(store, file, { name: flags.name, genre: flags.genre });
     console.log(`拆完：${t.name}｜${t.chapters} 章｜${t.avg_words} 字/章｜对白 ${(t.dialogue * 100).toFixed(0)}%｜钩子分布 ${t.hook_dist}`);
     console.log(t.beat_rhythm);
@@ -298,7 +298,7 @@ async function main() {
     const { store, llm } = open();
     const book = requireBook(store, flags.book);
     const idx = Number(flags.chapter || 0);
-    if (!idx) throw new Error('用法：novel-forge fix --book 1 --chapter 3 --quote "原文片段" --instruction "怎么改"');
+    if (!idx) throw new Error('用法：draftvein fix --book 1 --chapter 3 --quote "原文片段" --instruction "怎么改"');
     const ch = getChapter(store, book.id, idx);
     if (!ch) throw new Error(`第 ${idx} 章不存在`);
     const quote = String(flags.quote || '');
@@ -382,7 +382,7 @@ async function main() {
     const { store } = open();
     const book = requireBook(store, flags.book);
     const versionId = Number(flags.version || 0);
-    if (!versionId) throw new Error('用法：novel-forge rollback --book 1 --version <id>（先 versions 查）');
+    if (!versionId) throw new Error('用法：draftvein rollback --book 1 --version <id>（先 versions 查）');
     const ch = listVersions(store, book.id, Number(flags.chapter || 1)).find((v) => v.id === versionId);
     if (!ch) throw new Error('版本不存在');
     restoreVersion(store, book.id, Number(flags.chapter || 1), versionId);
@@ -408,7 +408,7 @@ async function main() {
     return;
   }
 
-  console.log(`novel-forge — 逐章推进的长篇小说框架
+  console.log(`draftvein — 逐章推进的长篇小说框架
 
   serve                         启动控制台（默认 http://127.0.0.1:4260）
   new "书名" --genre --premise   新建书
@@ -433,7 +433,7 @@ async function main() {
   rollback --book B --chapter N --version ID  回滚到某个版本
   logs --book B                 运行日志与统计
 
-环境变量：NOVEL_FORGE_PROVIDER=mock 可离线跑通全链路；NOVEL_FORGE_API_KEY/BASE_URL/MODEL 接任意 OpenAI 兼容端点。`);
+环境变量：DRAFTVEIN_PROVIDER=mock 可离线跑通全链路；DRAFTVEIN_API_KEY/BASE_URL/MODEL 接任意 OpenAI 兼容端点。`);
 }
 
 main().catch((err) => {

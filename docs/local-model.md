@@ -1,4 +1,4 @@
-# 本地小模型跑 novel-forge（CPU，无 GPU）
+# 本地小模型跑 draftvein（CPU，无 GPU）
 
 目标：不依赖任何云端 API，用魔搭（ModelScope）上的**小参数模型**跑通真实生成。
 
@@ -37,26 +37,26 @@ curl -sL -o qwen2.5-7b-instruct-q3_k_m.gguf \
   "https://modelscope.cn/api/v1/models/Qwen/Qwen2.5-7B-Instruct-GGUF/repo?Revision=master&FilePath=qwen2.5-7b-instruct-q3_k_m.gguf"
 
 # 启动（仓库自带脚本）
-cd ~/Projects/novel-forge
+cd ~/Projects/draftvein
 PORT=8090 CTX=4096 THREADS=22 ./scripts/local-model.sh ~/models/qwen7b/qwen2.5-7b-instruct-q3_k_m.gguf
 # → http://127.0.0.1:8090/v1
 ```
 
-## 4. 接进 novel-forge
+## 4. 接进 draftvein
 
 ```bash
-export NOVEL_FORGE_PROVIDER=openai
-export NOVEL_FORGE_BASE_URL=http://127.0.0.1:8090/v1
-export NOVEL_FORGE_API_KEY=local
-export NOVEL_FORGE_MODEL=local
-export NOVEL_FORGE_TIGHT=1            # 小模型上下文吃紧：设定 topN=6、摘要 3 章、上文 500 字
-export NOVEL_FORGE_MAX_TOKENS=700
-export NOVEL_FORGE_TIMEOUT=1800000
-export NOVEL_FORGE_TEMPERATURE=0.8
-export NOVEL_FORGE_TOP_P=0.9
-export NOVEL_FORGE_FREQ_PENALTY=0.6   # 小模型不加惩罚会整段复读
-export NOVEL_FORGE_PRES_PENALTY=0.2
-export NOVEL_FORGE_HOME=~/.novel-forge-local
+export DRAFTVEIN_PROVIDER=openai
+export DRAFTVEIN_BASE_URL=http://127.0.0.1:8090/v1
+export DRAFTVEIN_API_KEY=local
+export DRAFTVEIN_MODEL=local
+export DRAFTVEIN_TIGHT=1            # 小模型上下文吃紧：设定 topN=6、摘要 3 章、上文 500 字
+export DRAFTVEIN_MAX_TOKENS=700
+export DRAFTVEIN_TIMEOUT=1800000
+export DRAFTVEIN_TEMPERATURE=0.8
+export DRAFTVEIN_TOP_P=0.9
+export DRAFTVEIN_FREQ_PENALTY=0.6   # 小模型不加惩罚会整段复读
+export DRAFTVEIN_PRES_PENALTY=0.2
+export DRAFTVEIN_HOME=~/.draftvein-local
 
 node src/cli.ts new "旧城换命" --genre 悬疑 --premise "..." --words 900
 node src/cli.ts write --book 1 --count 1
@@ -111,11 +111,11 @@ python training/serve_hf.py --model ~/models/qwen0.5b-novel --port 8095
 # → http://127.0.0.1:8095/v1
 ```
 
-## 接进 novel-forge
+## 接进 draftvein
 ```bash
-export NOVEL_FORGE_PROVIDER=openai NOVEL_FORGE_BASE_URL=http://127.0.0.1:8095/v1 \
-       NOVEL_FORGE_API_KEY=local NOVEL_FORGE_MODEL=novel-lora NOVEL_FORGE_TIGHT=1 \
-       NOVEL_FORGE_MAX_TOKENS=600 NOVEL_FORGE_FREQ_PENALTY=0.6 NOVEL_FORGE_PRES_PENALTY=0.2
+export DRAFTVEIN_PROVIDER=openai DRAFTVEIN_BASE_URL=http://127.0.0.1:8095/v1 \
+       DRAFTVEIN_API_KEY=local DRAFTVEIN_MODEL=novel-lora DRAFTVEIN_TIGHT=1 \
+       DRAFTVEIN_MAX_TOKENS=600 DRAFTVEIN_FREQ_PENALTY=0.6 DRAFTVEIN_PRES_PENALTY=0.2
 ```
 
 ## 实测结果（本机，Qwen2.5-0.5B，160 步 × accum4 = 640 样本，27 分钟）

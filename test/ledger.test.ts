@@ -122,7 +122,7 @@ test('推进事件里的 0 不能抹掉已经规划的到期窗口', () => {
 
 test('老库迁移把遗留的 0 到期窗口清成未知，避免继续误报逾期', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-ledger-migrate-'));
-  const file = path.join(dir, 'novel-forge.db');
+  const file = path.join(dir, 'draftvein.db');
   const first = new Store(file);
   const b = createBook(first, { title: 'T', premise: 'P' });
   upsertThread(first, b.id, { code: 'legacy-zero', title: '旧零窗口', due_from: 0, due_to: 0 });

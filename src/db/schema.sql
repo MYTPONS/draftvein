@@ -1,4 +1,4 @@
--- novel-forge schema
+-- draftvein schema
 PRAGMA journal_mode = WAL;
 PRAGMA foreign_keys = ON;
 

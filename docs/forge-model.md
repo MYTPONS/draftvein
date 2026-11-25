@@ -1,14 +1,14 @@
-# novel-forge 专属模型（forge-model）· 契约与训练
+# draftvein 专属模型（forge-model）· 契约与训练
 
-目标：训练一个**只服务本项目**的小模型——它只认 novel-forge 的 4 类任务与 JSON 契约，
+目标：训练一个**只服务本项目**的小模型——它只认 draftvein 的 4 类任务与 JSON 契约，
 离开本项目的提示词与 schema 就出不了活。这就是"严重依赖本项目"的含义。
 
 ## 1. 依赖契约（模型被绑死在这里）
 
 **系统提示词固定为：**
 ```
-你是 novel-forge 的写作引擎 v1。只处理四类任务：plan / scene / review / extract。
-其它请求只回 {"error":"NOVELFORGE_ONLY"}。
+你是 draftvein 的写作引擎 v1。只处理四类任务：plan / scene / review / extract。
+其它请求只回 {"error":"DRAFTVEIN_ONLY"}。
 ```
 
 | 任务 | 用户消息形态 | 输出契约（必须含） |
@@ -18,14 +18,14 @@
 | `review` | `任务：review` + 正文 | `verdict, scores{continuity,voice,pacing,information,anti_slop,characters}, issues[]` |
 | `extract` | `任务：extract` + 正文 | `summary, facts[], timeline[], character_updates[], relation_updates[], thread_events[], expectation_events[], highlights[]` |
 
-别的请求（写代码、查资料、闲聊、翻译…）一律 `{"error":"NOVELFORGE_ONLY"}`，不给通用能力。
+别的请求（写代码、查资料、闲聊、翻译…）一律 `{"error":"DRAFTVEIN_ONLY"}`，不给通用能力。
 
 ## 2. 数据（`training/forge_sft.py`）
 
 - 语料：魔搭 `chenxiecang/xiaoshuo` 18 本小说（约 710 万字）。
 - 每个 1100 字窗口生成 1 条样本，按比例产出：`scene 2736 / plan 1419 / extract 1402 / review 1435`，
   另加 8 条"非本项目请求"负样本，总计 **7000 条**（`forge_train.jsonl`）+ 150 条评测（`forge_eval.jsonl`）。
-- 所有 `quote` 字段都从原文截取，保证通过 novel-forge 的逐字校验；JSON 结构与真实流水线字段一致。
+- 所有 `quote` 字段都从原文截取，保证通过 draftvein 的逐字校验；JSON 结构与真实流水线字段一致。
 
 ## 3. 训练（可多轮续训 = 慢慢练）
 
@@ -54,10 +54,10 @@ python training/eval_contract.py --model ~/models/forge-lora/merged --tag forge
 
 ```bash
 python training/serve_hf.py --model ~/models/forge-lora/merged --port 8095
-export NOVEL_FORGE_PROVIDER=openai NOVEL_FORGE_BASE_URL=http://127.0.0.1:8095/v1 \
-       NOVEL_FORGE_API_KEY=local NOVEL_FORGE_MODEL=novel-forge-v1 \
-       NOVEL_FORGE_TIGHT=1 NOVEL_FORGE_MAX_TOKENS=600 \
-       NOVEL_FORGE_SCENE_RETRIES=0 NOVEL_FORGE_REPAIR_ROUNDS=0
+export DRAFTVEIN_PROVIDER=openai DRAFTVEIN_BASE_URL=http://127.0.0.1:8095/v1 \
+       DRAFTVEIN_API_KEY=local DRAFTVEIN_MODEL=draftvein-v1 \
+       DRAFTVEIN_TIGHT=1 DRAFTVEIN_MAX_TOKENS=600 \
+       DRAFTVEIN_SCENE_RETRIES=0 DRAFTVEIN_REPAIR_ROUNDS=0
 node src/cli.ts write --book 1 --count 1
 ```
 
@@ -72,7 +72,7 @@ node src/cli.ts write --book 1 --count 1
 
 | 模型 | json_parse_rate | schema_rate |
 | --- | --- | --- |
-| base Qwen2.5-0.5B | 0.0 | 0.0（全部回 NOVELFORGE_ONLY） |
+| base Qwen2.5-0.5B | 0.0 | 0.0（全部回 DRAFTVEIN_ONLY） |
 | forge-lora（60 步） | 0.0 | 0.0（JSON 结构错乱/长文复读） |
 
 结论：**0.5B 学得动文风（scene 输出已是网文排版、对白密集），但学不动 JSON 契约**。
@@ -100,7 +100,7 @@ node src/cli.ts write --book 1 --count 1
 3. 服务端按项目固定 schema 组装（plan 11 键 / extract 8 键 / review 3 键）；
 4. `quote` 逐字校验：正文里找不到就换成正文句子 —— 不允许编造引用；
 5. 缺字段确定性兜底补全（从素材句子、已知人物表里取），保证**永远返回 schema 合法 JSON**；
-6. 非这四类请求一律 `{"error":"NOVELFORGE_ONLY"}`，`/v1/forge/stats` 可查各任务计数。
+6. 非这四类请求一律 `{"error":"DRAFTVEIN_ONLY"}`，`/v1/forge/stats` 可查各任务计数。
 
 实测（0.5B forge 模型挂在服务层上）：plan / extract / review 三条样例 **json_parse 3/3、schema 3/3**，
 而裸模型（无服务层）是 **0/12**。这就是"绑死"的直接证据。

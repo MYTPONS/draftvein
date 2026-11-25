@@ -10,9 +10,9 @@ const tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-verify-'));
 const port = 4400 + Math.floor(Math.random() * 300);
 const env = {
   ...process.env,
-  NOVEL_FORGE_PROVIDER: 'mock',
-  NOVEL_FORGE_HOME: tmpHome,
-  NOVEL_FORGE_PORT: String(port),
+  DRAFTVEIN_PROVIDER: 'mock',
+  DRAFTVEIN_HOME: tmpHome,
+  DRAFTVEIN_PORT: String(port),
 };
 
 const results = [];
@@ -70,7 +70,7 @@ try {
   health.ok ? ok('health', `provider=${health.provider}`) : bad('health', JSON.stringify(health));
 
   const idx = await (await fetch(`${base}/`)).text();
-  idx.includes('novel-forge') ? ok('静态页可访问') : bad('静态页可访问', 'index.html 不含品牌');
+  idx.includes('draftvein') ? ok('静态页可访问') : bad('静态页可访问', 'index.html 不含品牌');
 
   const css = await fetch(`${base}/style.css`);
   css.ok ? ok('样式表可访问') : bad('样式表', String(css.status));
